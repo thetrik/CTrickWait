@@ -1,18 +1,12 @@
-#CTrickWait
+# CTrickWait
 
 ## Asynchronous waiting for kernel objects
 
-
-
 Hello everyone.
-
-
 
 This class allows to wait for Windows kernel objects and generate an event when an object switches to the signaled state or a timeout has elapsed.
 
 The class has 3 methods: **vbWaitForSingleObject**, **vbWaitForMultipleObjects** and **Abort**. The first two methods are the analogs of the corresponding WINAPI functions [WaitForSingleObject](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject) and [WaitForMultipleObjects](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitformultipleobjects).
-
-
 
  As soon as an object (or all the objects) changes the state to signaled the event **OnWait** is fired. The arguments of the events contains the event handle (or the pointer to the handles) and the returned value. **Abort** method allows to break any pending waiting operation. It can either returns immediately or wait until the request will be processed.
 
@@ -26,13 +20,8 @@ The class has an assembly thunk which creates a thread and runs waiting in this 
 
 The module is poorly tested so bugs are possible. I would be very glad to any bug-reports, wherever possible I will correct them.
 
-
 Thank you all for attention!
 
-
-
 Best Regards,
-
-
 
 The trick.
