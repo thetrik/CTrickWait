@@ -89,7 +89,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 ' //
 ' // CTrickWait - demonstration of monitoring of the file operations
-' // © The trick, 2015-2021
+' // Â© The trick, 2015-2021
 ' //
 
 Option Explicit
@@ -171,6 +171,7 @@ Private m_hDirectory    As Long         ' // Handle of the monitored directory
 Private m_hEvent        As Long         ' // Handle of the asynchronous event
 Private m_bBufEvents()  As Byte         ' // Buffer for the notifications
 Private m_tOvp          As OVERLAPPED   ' // Structure which allows to do the asynchronous monitoring
+Private m_iWatchSubdir  As Long         ' // Whether you want to track subdirectories as well
 
 
 Private Sub cmdMonitor_Click()
@@ -214,8 +215,8 @@ Private Sub cmdMonitor_Click()
     ReDim m_bBufEvents(16383)
     
     ' // Start the m_cMonitor in the asynchronous mode
-    If ReadDirectoryChanges(m_hDirectory, m_bBufEvents(0), UBound(m_bBufEvents) + 1, True, FILE_NOTIFY_CHANGE_FILE_NAME _
-                            Or FILE_NOTIFY_CHANGE_DIR_NAME, 0, m_tOvp, 0) = 0 Then
+    If ReadDirectoryChanges(m_hDirectory, m_bBufEvents(0), UBound(m_bBufEvents) + 1, m_iWatchSubdir, FILE_NOTIFY_CHANGE_FILE_NAME _
+Or FILE_NOTIFY_CHANGE_DIR_NAME Or FILE_ACTION_ADDED Or FILE_ACTION_REMOVED, 0, m_tOvp, 0) = 0 Then
         ' // Handle error
         MsgBox "Error start m_cMonitor", vbExclamation
         CloseHandle m_hEvent:     m_hEvent = 0
@@ -236,6 +237,7 @@ Private Sub Form_Load()
 
     Set m_cMonitor = New CTrickWait
     txtMonitor = Environ("WINDIR")
+    m_iWatchSubdir = 1
     
 End Sub
 
@@ -284,8 +286,8 @@ Private Sub m_cMonitor_OnWait( _
     m_tOvp.hEvent = hHandle
     
     ' // Start the monitor in the asynchronous mode
-    Call ReadDirectoryChanges(m_hDirectory, m_bBufEvents(0), UBound(m_bBufEvents) + 1, False, _
-                              FILE_NOTIFY_CHANGE_FILE_NAME, 0, m_tOvp, 0)
+    Call ReadDirectoryChanges(m_hDirectory, m_bBufEvents(0), UBound(m_bBufEvents) + 1, m_iWatchSubdir, _
+FILE_NOTIFY_CHANGE_FILE_NAME Or FILE_NOTIFY_CHANGE_DIR_NAME Or FILE_ACTION_ADDED Or FILE_ACTION_REMOVED, 0, m_tOvp, 0)
     
     ' // Abort the previous waiting
     m_cMonitor.Abort
